@@ -15,12 +15,12 @@ class Ensemble():
             self.category_positions = {}
             for positions in positions.T.to_dict().values():
                 categories = self.category_positions.get( positions['Position'], [] )
-                categories.append(str(positions['Category']))
+                categories.append(str(positions['Sub_Category']))
                 self.category_positions[positions['Position']] = categories
 
     def get_ensemble_combinations(self):
         combinations = pd.read_excel(self.FILE, 'sku_ensemble_mapping')
-        combinations = combinations[ ['sku', 'category', 'Position', 'is_0', 'is_1', 'is_2', 'is_3', 'is_4'] ]
+        combinations = combinations[ ['sku', 'Sub Category', 'Position', 'is_0', 'is_1', 'is_2', 'is_3', 'is_4'] ]
         combinations.columns = ['sku', 'category', 'position', 0, 1, 2, 3, 4]
 
         ensembles = combinations[ combinations.position == 'Anchor']
@@ -42,7 +42,7 @@ class Ensemble():
         return series
 
     def fill_bottom_combinations(self, series):
-        return [str(sku) for sku in list(self.bottom_ensembles[self.bottom_ensembles.sku == series.sku].combination)]
+        return [str(sku) for sku in tuple(self.bottom_ensembles[self.bottom_ensembles.sku == series.sku].combination)[0].split(',')]
 
     def format_ensembles(self):
         ensembles = self.ensembles.T.to_dict().values()
